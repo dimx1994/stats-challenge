@@ -26,7 +26,9 @@ class PageLoads(Base):
     count = Column(Integer)
 
     def __repr__(self):
-        return f"PageLoads(created_ts={self.created_ts}, ts={self.ts}, customer_id={self.customer_id}, count={self.count})"
+        return (
+            f"PageLoads(created_ts={self.created_ts}, ts={self.ts}, customer_id={self.customer_id}, count={self.count})"
+        )
 
 
 class Clicks(Base):
@@ -50,7 +52,19 @@ class UniqueUserClicks(Base):
     count = Column(Integer)
 
     def __repr__(self):
-        return f"Clicks(created_ts={self.created_ts}, ts={self.ts}, customer_id={self.customer_id}, count={self.count})"
+        return f"UniqueUserClicks(created_ts={self.created_ts}, ts={self.ts}, customer_id={self.customer_id}, count={self.count})"
+
+
+class ClickThroughRate(Base):
+    __tablename__ = "click_through_rate"
+    id = Column(Integer, primary_key=True)
+    created_ts = Column(DateTime())
+    ts = Column(DateTime())
+    customer_id = Column(Integer)
+    count = Column(Integer)
+
+    def __repr__(self):
+        return f"ClickThroughRate(created_ts={self.created_ts}, ts={self.ts}, customer_id={self.customer_id}, count={self.count})"
 
 
 def create_all_models_waiting_postgres() -> None:
@@ -79,20 +93,26 @@ def save_clicks(session: SessionLocal, clicks: List[Clicks]) -> None:
     logging.info("Saved %s clicks", len(clicks))
 
 
-def save_unique_user_clicks(
-    session: SessionLocal, unique_user_clicks: List[UniqueUserClicks]
-) -> None:
+def save_unique_user_clicks(session: SessionLocal, unique_user_clicks: List[UniqueUserClicks]) -> None:
     session.bulk_save_objects(unique_user_clicks)
     session.commit()
     logging.info("Saved %s unique user clicks", len(unique_user_clicks))
+
+
+def save_click_through_rate(session: SessionLocal, click_through_rate: List[ClickThroughRate]) -> None:
+    session.bulk_save_objects(click_through_rate)
+    session.commit()
+    logging.info("Saved %s click through rate", len(click_through_rate))
 
 
 def save_reports(
     page_loads: List[PageLoads],
     clicks: List[Clicks],
     unique_user_clicks: List[UniqueUserClicks],
+    click_through_rate: List[ClickThroughRate],
 ) -> None:
     with SessionLocal() as session:
         save_page_loads(session, page_loads)
         save_clicks(session, clicks)
         save_unique_user_clicks(session, unique_user_clicks)
+        save_click_through_rate(session, click_through_rate)

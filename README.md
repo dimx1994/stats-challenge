@@ -1,4 +1,41 @@
-# Campaign Performance Analysis
+# Campaign Performance Analysis - Solution
+
+For task description please see below. I only implemented scenario 1, but scenario 2
+isn't hard to implement as the data is sorted by timestamp, so it's possible to do all
+needed calculation in real time(if you need this, I could add this). 
+
+**Requirements:**
+Application requires docker and docker-compose to be installed and started.
+
+**Installation:**
+To start a service run:
+```bash
+docker-compose up --build
+```
+
+The data will be read, report will be calculated and written to docker postgres instance. 
+You can query the reports by running:
+
+```
+psql postgresql://user:password@localhost:5432/stats
+
+stats=# select * from page_loads;
+stats=# select * from clicks;
+stats=# select * from unique_user_clicks;
+stats=# select * from click_through_rate;
+```
+
+`click_through_rate` is implemented using a time window, when we check if there are `ReferralPageLoad` 
+events in this time window, that have the same `user_id` and `customer_id` as in `ReferralRecommendClick`. 
+We can think of this click as being directly related to the page load event. You can change window size by 
+changing `CLICK_THROUGH_WINDOW_SECONDS` env in `docker-compose.yaml`, default is 300 seconds
+(there should be some time that the user visits the page and thinks about whether to click on the link)
+Сhanging this window, you can get a different number of related events. But it seems that in the given data for almost all `ReferralRecommendClick` events, there are 
+`ReferralPageLoad` events within 600 seconds.
+
+TODO: add some tests
+
+# Task description
 
 We would like to know if users find the reward attractive enough to recommend this product on our [recommendation page](referral.png). Each customer has a custom recommendation landing page. We have multiple customers and each has a different customer_id, the example in the page is IONOS. Customer is a company that offers the product and needs referral marketing, user is a person who wants to potentially buy the product and interacts with the page. 
 
@@ -40,8 +77,3 @@ Decide on how you would want to model the reports and create queries to create t
 - In a state that you consider production ready
 - No sensitive data included
 - Please submit it in a link to a git repository or the git repository as .zip together with the commit history
-
-# Solution
-
-`psql postgresql://user:password@localhost:5432/stats`
-`select * from clicks;`

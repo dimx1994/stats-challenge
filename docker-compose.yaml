@@ -14,5 +14,6 @@ services:
       dockerfile: app.Dockerfile
     environment:
       - SQLALCHEMY_DATABASE_URI=postgresql://user:password@db:5432/stats
+      - CLICK_THROUGH_WINDOW_SECONDS=300
     depends_on:
       - db
