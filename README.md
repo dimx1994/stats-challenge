@@ -14,7 +14,8 @@ docker-compose up --build
 ```
 
 The data will be read, report will be calculated and written to docker postgres instance. 
-After the statistics application has finished saving the reports and exits, 
+After the statistics application has finished saving the reports and exits
+(please wait for 'Statistics were successfully calculated and reports were successfully saved' message), 
 you can query the reports from postgres by running:
 
 ```
