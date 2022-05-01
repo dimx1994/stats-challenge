@@ -12,8 +12,8 @@ logging.basicConfig(
 
 def main() -> None:
     create_all_models_waiting_postgres()
-    clicks, page_loads = calculate_statistics()
-    save_reports(page_loads, clicks)
+    page_loads, clicks, unique_user_clicks = calculate_statistics()
+    save_reports(page_loads, clicks, unique_user_clicks)
 
 
 if __name__ == "__main__":

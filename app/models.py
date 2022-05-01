@@ -6,7 +6,6 @@ from sqlalchemy import Column, DateTime, Integer, create_engine
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql import func
 
 from app.settings import Settings
 
@@ -23,11 +22,11 @@ class PageLoads(Base):
     id = Column(Integer, primary_key=True)
     created_ts = Column(DateTime())
     ts = Column(DateTime())
-    user_id = Column(Integer)
+    customer_id = Column(Integer)
     count = Column(Integer)
 
     def __repr__(self):
-        return f"PageLoads(created_ts={self.created_ts}, ts={self.ts}, user_id={self.user_id}, count={self.count})"
+        return f"PageLoads(created_ts={self.created_ts}, ts={self.ts}, customer_id={self.customer_id}, count={self.count})"
 
 
 class Clicks(Base):
@@ -35,11 +34,23 @@ class Clicks(Base):
     id = Column(Integer, primary_key=True)
     created_ts = Column(DateTime())
     ts = Column(DateTime())
-    user_id = Column(Integer)
+    customer_id = Column(Integer)
     count = Column(Integer)
 
     def __repr__(self):
-        return f"Clicks(created_ts={self.created_ts}, ts={self.ts}, user_id={self.user_id}, count={self.count})"
+        return f"Clicks(created_ts={self.created_ts}, ts={self.ts}, customer_id={self.customer_id}, count={self.count})"
+
+
+class UniqueUserClicks(Base):
+    __tablename__ = "unique_user_clicks"
+    id = Column(Integer, primary_key=True)
+    created_ts = Column(DateTime())
+    ts = Column(DateTime())
+    customer_id = Column(Integer)
+    count = Column(Integer)
+
+    def __repr__(self):
+        return f"Clicks(created_ts={self.created_ts}, ts={self.ts}, customer_id={self.customer_id}, count={self.count})"
 
 
 def create_all_models_waiting_postgres() -> None:
@@ -68,7 +79,20 @@ def save_clicks(session: SessionLocal, clicks: List[Clicks]) -> None:
     logging.info("Saved %s clicks", len(clicks))
 
 
-def save_reports(page_loads: List[PageLoads], clicks: List[Clicks]) -> None:
+def save_unique_user_clicks(
+    session: SessionLocal, unique_user_clicks: List[UniqueUserClicks]
+) -> None:
+    session.bulk_save_objects(unique_user_clicks)
+    session.commit()
+    logging.info("Saved %s unique user clicks", len(unique_user_clicks))
+
+
+def save_reports(
+    page_loads: List[PageLoads],
+    clicks: List[Clicks],
+    unique_user_clicks: List[UniqueUserClicks],
+) -> None:
     with SessionLocal() as session:
         save_page_loads(session, page_loads)
         save_clicks(session, clicks)
+        save_unique_user_clicks(session, unique_user_clicks)

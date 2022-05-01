@@ -40,3 +40,8 @@ Decide on how you would want to model the reports and create queries to create t
 - In a state that you consider production ready
 - No sensitive data included
 - Please submit it in a link to a git repository or the git repository as .zip together with the commit history
+
+# Solution
+
+`psql postgresql://user:password@localhost:5432/stats`
+`select * from clicks;`
