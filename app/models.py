@@ -16,6 +16,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
+logger = logging.getLogger(__name__)
+
 
 class PageLoads(Base):
     __tablename__ = "page_loads"
@@ -73,36 +75,36 @@ def create_all_models_waiting_postgres() -> None:
     """
     for _ in range(10):
         try:
-            logging.info("Creating all dbs")
+            logger.info("Creating all dbs")
             Base.metadata.create_all(bind=engine)
             break
         except OperationalError:
-            logging.info("Waiting for postres")
+            logger.info("Waiting for postres")
             time.sleep(1)
 
 
 def save_page_loads(session: SessionLocal, page_loads: List[PageLoads]) -> None:
     session.bulk_save_objects(page_loads)
     session.commit()
-    logging.info("Saved %s page loads", len(page_loads))
+    logger.info("Saved %s page loads", len(page_loads))
 
 
 def save_clicks(session: SessionLocal, clicks: List[Clicks]) -> None:
     session.bulk_save_objects(clicks)
     session.commit()
-    logging.info("Saved %s clicks", len(clicks))
+    logger.info("Saved %s clicks", len(clicks))
 
 
 def save_unique_user_clicks(session: SessionLocal, unique_user_clicks: List[UniqueUserClicks]) -> None:
     session.bulk_save_objects(unique_user_clicks)
     session.commit()
-    logging.info("Saved %s unique user clicks", len(unique_user_clicks))
+    logger.info("Saved %s unique user clicks", len(unique_user_clicks))
 
 
 def save_click_through_rate(session: SessionLocal, click_through_rate: List[ClickThroughRate]) -> None:
     session.bulk_save_objects(click_through_rate)
     session.commit()
-    logging.info("Saved %s click through rate", len(click_through_rate))
+    logger.info("Saved %s click through rate", len(click_through_rate))
 
 
 def save_reports(

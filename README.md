@@ -14,7 +14,8 @@ docker-compose up --build
 ```
 
 The data will be read, report will be calculated and written to docker postgres instance. 
-You can query the reports by running:
+After the statistics application has finished saving the reports and exits, 
+you can query the reports from postgres by running:
 
 ```
 psql postgresql://user:password@localhost:5432/stats

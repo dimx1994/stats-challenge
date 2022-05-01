@@ -108,4 +108,5 @@ def calculate_statistics() -> Tuple[List[PageLoads], List[Clicks], List[UniqueUs
     logger.info("Calculated clicks, first 5 are %s", clicks[:5])
     logger.info("Calculated unique_user_clicks, first 5 are %s", unique_user_clicks[:5])
     logger.info("Calculated click_through_rate, first 5 are %s", click_through_rate[:5])
+    logger.info("Statistics were successfully calculated")
     return page_loads, clicks, unique_user_clicks, click_through_rate
